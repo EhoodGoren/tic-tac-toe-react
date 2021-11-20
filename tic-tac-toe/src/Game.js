@@ -26,14 +26,34 @@ export default class Game extends React.Component {
         }));
     }
 
+    jumpToMove(move){
+        const historyUntilMove = this.state.history.slice(0, move + 1);
+        this.setState({
+            history: historyUntilMove,
+            xIsNext: move % 2 === 0
+        })
+    }
+
     render() {
         const history = this.state.history;
-        const currentBoard = history[history.length - 1].squares;
+        const currentBoard = (history[history.length - 1]).squares;
         const winner = checkWinner(currentBoard);
         const status = 
         winner
         ? `The winner is: ${winner}`
-        : `Next player is: ${this.state.xIsNext ? 'X' : 'O'}`
+        : `Next player is: ${this.state.xIsNext ? 'X' : 'O'}`;
+
+        const moves = history.map((board, move) => {
+            const description = 
+            move
+            ? `Go to move ${move}`
+            : 'Go to game start';
+            return (
+                <li key={move}>
+                    <button onClick={() => this.jumpToMove(move)}>{description}</button>
+                </li>
+            );
+        });
         return (
             <div className="game">
                 <div className="game-board">
@@ -44,7 +64,7 @@ export default class Game extends React.Component {
                 </div>
                 <div className="game-info">
                     <div>{status}</div>
-                    <ol>{/* TODO */}</ol>
+                    <ol>{moves}</ol>
                 </div>
             </div>
         )
